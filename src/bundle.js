@@ -1222,16 +1222,21 @@
     };
   }
 
-  function developmentStartingGold() {
+  function isDevelopmentTestBuild() {
     const location = typeof window !== "undefined" ? window.location : null;
     const host = location && location.hostname ? location.hostname : "";
     const protocol = location && location.protocol ? location.protocol : "";
-    const isDev = protocol === "file:" ||
+    const path = location && location.pathname ? location.pathname : "";
+    return protocol === "file:" ||
       host === "localhost" ||
       host === "127.0.0.1" ||
       host === "" ||
-      host.includes("trycloudflare.com");
-    return isDev ? 30000 : 300;
+      host.includes("trycloudflare.com") ||
+      (host === "maruw501.github.io" && path.includes("/labyrinth-mall-test"));
+  }
+
+  function developmentStartingGold() {
+    return isDevelopmentTestBuild() ? 30000 : 300;
   }
 
   function createNewGame() {
@@ -1331,14 +1336,14 @@
   function normalizeState(state) {
     if (!state || typeof state !== "object") return createNewGame();
     const fresh = createNewGame();
-    const merged = Object.assign(fresh, state);
-    merged.today = Object.assign(fresh.today, state.today || {});
-    merged.hero = Object.assign(fresh.hero, state.hero || {});
+    const merged = Object.assign({}, fresh, state);
+    merged.today = Object.assign({}, fresh.today, state.today || {});
+    merged.hero = Object.assign({}, fresh.hero, state.hero || {});
     merged.hero.inventory = Array.isArray(merged.hero.inventory) ? merged.hero.inventory : [];
-    merged.hero.equipment = Object.assign(fresh.hero.equipment, (state.hero && state.hero.equipment) || {});
-    merged.town = Object.assign(fresh.town, state.town || {});
+    merged.hero.equipment = Object.assign({}, fresh.hero.equipment, (state.hero && state.hero.equipment) || {});
+    merged.town = Object.assign({}, fresh.town, state.town || {});
     merged.villagers = Array.isArray(state.villagers) ? state.villagers : fresh.villagers;
-    merged.shop = Object.assign(fresh.shop, state.shop || {});
+    merged.shop = Object.assign({}, fresh.shop, state.shop || {});
     merged.shop.name = typeof merged.shop.name === "string" && merged.shop.name.trim() ? merged.shop.name.trim().slice(0, 16) : fresh.shop.name;
     merged.shop.storage = Array.isArray(merged.shop.storage) ? merged.shop.storage : [];
     merged.shop.shelfItems = Array.isArray(merged.shop.shelfItems) ? merged.shop.shelfItems : [];
@@ -1353,19 +1358,20 @@
       merged.townMap.hero = Object.assign(defaultTownMap().hero, (state.townMap && state.townMap.hero) || {});
     }
     merged.townMap.facing = merged.townMap.facing || "down";
-    merged.buildings = Object.assign(fresh.buildings, state.buildings || {});
-    merged.dungeon = Object.assign(fresh.dungeon, state.dungeon || {});
+    merged.buildings = Object.assign({}, fresh.buildings, state.buildings || {});
+    merged.dungeon = Object.assign({}, fresh.dungeon, state.dungeon || {});
     merged.dungeon.tier = clamp(Math.round(merged.dungeon.tier || 0), 0, 2);
     merged.dungeon.clearedTiers = Array.isArray(merged.dungeon.clearedTiers) ? merged.dungeon.clearedTiers : [];
-    merged.blacksmith = Object.assign(fresh.blacksmith, state.blacksmith || {});
-    merged.flags = Object.assign(fresh.flags, state.flags || {});
-    merged.dailyGoals = Object.assign(fresh.dailyGoals, state.dailyGoals || {});
+    merged.blacksmith = Object.assign({}, fresh.blacksmith, state.blacksmith || {});
+    merged.flags = Object.assign({}, fresh.flags, state.flags || {});
+    merged.dailyGoals = Object.assign({}, fresh.dailyGoals, state.dailyGoals || {});
     merged.dailyGoals.goals = Array.isArray(merged.dailyGoals.goals) ? merged.dailyGoals.goals : [];
-    merged.quests = Object.assign(fresh.quests, state.quests || {});
+    merged.quests = Object.assign({}, fresh.quests, state.quests || {});
     merged.raidOmen = state.raidOmen && state.raidOmen.active ? Object.assign({}, state.raidOmen) : null;
     merged.townStory = state.townStory && typeof state.townStory === "object" ? Object.assign({}, state.townStory) : null;
     merged.log = Array.isArray(merged.log) ? merged.log.slice(-80) : fresh.log;
     merged.uiOverlay = null;
+    if (isDevelopmentTestBuild()) merged.hero.gold = Math.max(Number(merged.hero.gold) || 0, 30000);
     Game.Villagers.normalizeVillagers(merged);
     if (Game.Weapons) Game.Weapons.normalizeAll(merged);
     if (Game.Objectives) {
@@ -1541,6 +1547,7 @@
     MAX_TOWN_LEVEL,
     clamp,
     createNewGame,
+    isDevelopmentTestBuild,
     normalizeState,
     updateDerivedStats,
     addLog,
