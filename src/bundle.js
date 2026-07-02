@@ -2361,7 +2361,7 @@
     hero: "hero.png",
     "hero-walk-16": "hero-walk-16-sheet-v3.png",
     "hero-walk-sheet": "hero-walk-sheet.png",
-    "ninja-hero-walk": "ninja-merchant-hero-walk.png",
+    "ninja-hero-walk": "ninja-pack-hero-walk.png",
     jewel: "jewel.png",
     loot: "potion.png",
     material: "material.png",
