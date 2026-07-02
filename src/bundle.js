@@ -10014,6 +10014,7 @@
     dungeonRun = null;
     Game.Save.save(state);
     Game.UI.renderMain();
+    showDayTransition("はじまりの町");
   }
 
   function continueGame() {
@@ -10069,6 +10070,15 @@
     if (Game.UI && Game.UI.showSceneTransition) {
       Game.UI.showSceneTransition(title, subtitle);
     }
+  }
+
+  function dayTitle(day) {
+    return `${Math.max(1, Number(day) || 1)}日目`;
+  }
+
+  function showDayTransition(subtitle) {
+    if (!state || state.flags.gameOver) return;
+    showSceneTransition(dayTitle(state.day), subtitle || "朝");
   }
 
   function dungeonTransitionTitle(run) {
@@ -10451,7 +10461,10 @@
     if (Game.Audio) Game.Audio.playSfx("questComplete");
     Game.Save.save(state);
     if (state.flags.gameOver) Game.UI.renderResult();
-    else Game.UI.renderMain();
+    else {
+      Game.UI.renderMain();
+      showDayTransition("朝");
+    }
   }
 
   function townConfirm() {
@@ -10648,6 +10661,7 @@
     Game.State.addLogs(state, Game.State.checkTownLevelUp(state));
 
     let raidReport = null;
+    let startedNextDay = false;
     if (Game.Raid.shouldRaidOccur(state)) {
       if (Game.Audio) {
         Game.Audio.playSfx("raidWarning");
@@ -10662,31 +10676,42 @@
     if (!Game.State.checkGameEnd(state)) {
       if (state.day >= state.maxDays) {
         Game.State.startNextDay(state);
+        startedNextDay = true;
         Game.State.checkGameEnd(state);
       } else if (!raidReport) {
         Game.State.startNextDay(state);
+        startedNextDay = true;
       }
     }
 
     Game.Save.save(state);
     if (state.flags.gameOver) Game.UI.renderResult();
     else if (raidReport) Game.UI.renderRaid(raidReport);
-    else Game.UI.renderMain();
+    else {
+      Game.UI.renderMain();
+      if (startedNextDay) showDayTransition("朝");
+    }
   }
 
   function continueAfterRaid() {
     if (Game.Audio) Game.Audio.setMode("town");
+    let startedNextDay = false;
     if (!Game.State.checkGameEnd(state)) {
       if (state.day >= state.maxDays) {
         Game.State.startNextDay(state);
+        startedNextDay = true;
         Game.State.checkGameEnd(state);
       } else {
         Game.State.startNextDay(state);
+        startedNextDay = true;
       }
     }
     Game.Save.save(state);
     if (state.flags.gameOver) Game.UI.renderResult();
-    else Game.UI.renderMain();
+    else {
+      Game.UI.renderMain();
+      if (startedNextDay) showDayTransition("朝");
+    }
   }
 
   function buyUpgrade(id) {
