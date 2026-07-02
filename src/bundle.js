@@ -1,4 +1,3 @@
-// src/items.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -288,7 +287,6 @@
 })();
 
 
-// src/weapons.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -596,7 +594,6 @@
 })();
 
 
-// src/villagers.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -933,7 +930,6 @@
 })();
 
 
-// src/objectives.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -1191,7 +1187,6 @@
 })();
 
 
-// src/gameState.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -1298,6 +1293,7 @@
         resultReason: "",
         nextDungeonMutation: false,
         adventurerDemand: false,
+        alefVisited: false,
         blacksmithDiscount: 0,
         hadResidents: false,
         blacksmithArrivalPending: false,
@@ -1519,8 +1515,10 @@
       state.flags.blacksmithArrivalPending = false;
       state.townStory = {
         type: "blacksmithArrival",
-        phase: "walk",
+        phase: "intro",
+        dialogIndex: 0,
         startedAt: 0,
+        lineStartedAt: 0,
         opened: false
       };
       logs.push("朝、町の外れから一人の商人が歩いてきた。");
@@ -1552,7 +1550,6 @@
 })();
 
 
-// src/engine/renderer.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -2334,7 +2331,6 @@
 })();
 
 
-// src/engine/sprites.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -2472,7 +2468,6 @@
 })();
 
 
-// src/engine/animations.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -2792,7 +2787,6 @@
 })();
 
 
-// src/engine/tilemap.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -2828,7 +2822,6 @@
 })();
 
 
-// src/engine/entity.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -2880,7 +2873,6 @@
 })();
 
 
-// src/combat.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -2942,7 +2934,6 @@
 })();
 
 
-// src/dungeon.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -3679,7 +3670,6 @@
 })();
 
 
-// src/shop.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -4695,7 +4685,6 @@
 })();
 
 
-// src/town.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -4917,7 +4906,7 @@
   ]);
 
   const LARGE_BUILDING_LABELS = {
-    shop: { name: "\u304a\u5e97", symbol: "\u5e97", x: 49, y: 42, footprint: { x: 44, y: 36, w: 10, h: 9 }, description: "\u68da\u306b\u5546\u54c1\u3092\u4e26\u3079\u3001\u591c\u306e\u8ca9\u58f2\u3078\u5099\u3048\u308b\u5e97\u3002" },
+    shop: { name: "\u304a\u5e97", symbol: "\u5e97", x: 49, y: 42, footprint: { x: 44, y: 36, w: 10, h: 11 }, description: "\u68da\u306b\u5546\u54c1\u3092\u4e26\u3079\u3001\u591c\u306e\u8ca9\u58f2\u3078\u5099\u3048\u308b\u5e97\u3002" },
     item_shop: { name: "\u9053\u5177\u5c4b", symbol: "\u9053", description: "\u85ac\u8349\u3084\u305f\u3044\u307e\u3064\u306a\u3069\u3092\u6271\u3046\u5546\u5e97\u3002" },
     hospital: { name: "\u75c5\u9662", symbol: "\u533b", description: "\u8ca0\u50b7\u3057\u305f\u6751\u4eba\u306e\u72b6\u614b\u3092\u78ba\u8a8d\u3059\u308b\u5834\u6240\u3002" },
     blacksmith: { name: "\u935b\u51b6\u5c4b", symbol: "\u935b", description: "\u7d20\u6750\u3067\u88c5\u5099\u3092\u4f5c\u308a\u3001\u5f37\u5316\u3059\u308b\u3002" },
@@ -5151,9 +5140,10 @@
   }
 
   function isLevelOneRoadTile(x, y) {
-    return ((x === 48 || x === 49) && y >= 45 && y <= 49) ||
+    return ((x === 48 || x === 49) && y >= 47 && y <= 50) ||
       (x === 56 && y >= 43 && y <= 49) ||
-      (y === 49 && x >= 47 && x <= 56);
+      (y === 49 && x >= 47 && x <= 56) ||
+      (y === 50 && x >= 43 && x <= 49);
   }
 
   function isRoadForState(state, x, y) {
@@ -5225,7 +5215,7 @@
 
   function isTownShopNameSignTile(state, x, y) {
     if (!state || (state.town.level || 1) > 1) return false;
-    return x === 51 && y === 45;
+    return x === 51 && y === 47;
   }
 
   function isLevelOneBlacksmithOpen(state) {
@@ -5597,7 +5587,6 @@
 })();
 
 
-// src/raid.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -5707,7 +5696,6 @@
 })();
 
 
-// src/events.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -5773,7 +5761,6 @@
 })();
 
 
-// src/save.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
   const SAVE_KEY = "labyrinth_mall_save_v1";
@@ -5821,7 +5808,6 @@
 })();
 
 
-// src/audio.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
   const STORAGE_KEY = "labyrinthMallAudioSettings";
@@ -6003,7 +5989,6 @@
 })();
 
 
-// src/scenes/townScene.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -6026,13 +6011,24 @@
     { id: "dog", sprite: "animal-dog", x: 58.2, y: 45.4, path: [[0, 0], [-1.0, 0], [-1.0, 0.2], [0, 0.2]], speed: 980, size: 19, footDrop: 4, phase: 0.55 },
     { id: "chicken", sprite: "animal-chicken", x: 53.0, y: 36.7, path: [[0, 0], [0.9, 0], [0.9, 0.2], [0, 0.2]], speed: 620, size: 16, footDrop: 1, phase: 0.80 }
   ];
-  const LEVEL_ONE_SHOP = { x: 44, y: 36, w: 10, h: 9 };
+  const LEVEL_ONE_SHOP = { x: 44, y: 36, w: 10, h: 11 };
   const LEVEL_ONE_BLACKSMITH = { x: 38, y: 48, w: 6, h: 6 };
+  const STORY_TEXT_SPEED = 58;
+  const GODO_WALK_DURATION = 3600;
+  const STORY_INTRO_LINES = [
+    "朝の空気がまだ冷たいころ、町の外れで荷車の音がした。",
+    "どうやら、商売の気配を聞きつけた誰かが歩いてくるようだ。"
+  ];
   const GODO_DIALOG_LINES = [
     "ゴド「こんなところにお店があったとは、",
     "冒険者が好きそうな迷宮もあるので儲かりそうだな。",
     "ここでわしも商売させてもらうよ。",
-    "私の名前はゴド、よろしくな」 決定で続ける"
+    "私の名前はゴド、よろしくな」"
+  ];
+  const ALEF_DIALOG_LINES = [
+    "冒険者アレフ「迷宮の近くに、こんな町があったなんて。",
+    "これからの発展が楽しみだな。しばらく立ち寄らせてもらうよ」",
+    "冒険者アレフが町に立ち寄るようになった。"
   ];
 
   function draw(canvas, state) {
@@ -6170,7 +6166,7 @@
         draw: () => drawAnimal(ctx, animal, visualAnimal)
       });
     });
-    if (story && story.type === "blacksmithArrival" && !story.opened) {
+    if (story && story.type === "blacksmithArrival" && !story.opened && (story.phase === "walk" || story.phase === "godoTalk")) {
       const visualGodo = godoVisual(story.elapsed);
       if (inView(visualGodo.x, visualGodo.y)) {
         entities.push({
@@ -6870,7 +6866,7 @@
 
   function drawShopNameSign(ctx, state) {
     const R = Game.Renderer;
-    const point = tilePoint(51, 45);
+    const point = tilePoint(51, 47);
     const name = (state.shop && state.shop.name) ? state.shop.name : "名もなき店";
     const shortName = name.length > 5 ? `${name.slice(0, 5)}…` : name;
     R.drawShadow(ctx, point.x + 2, point.y + 15, TILE + 15, 8, 0.24);
@@ -7181,10 +7177,11 @@
   function messageLines(state, target) {
     const story = state && state.townStory && state.townStory.type === "blacksmithArrival" ? state.townStory : null;
     if (story) {
-      const elapsed = story.startedAt ? Date.now() - story.startedAt : 0;
-      if (!story.opened && elapsed < 1600 && story.phase !== "message") return ["町の外れから、一人の職人が歩いてきた。"];
-      if (!story.opened) return GODO_DIALOG_LINES;
-      return ["ゴドの鍛冶屋が町に開店した。", "決定で町へ戻る。"];
+      if (story.phase === "intro") return storyTypedLines(story, STORY_INTRO_LINES, "決定で様子を見る。");
+      if (story.phase === "walk") return ["ゴドが道具袋を揺らしながら、ゆっくり歩いてくる。"];
+      if (story.phase === "godoTalk" || story.phase === "message") return storyTypedLines(story, GODO_DIALOG_LINES, "決定で続ける。");
+      if (story.phase === "opened") return ["ゴドの鍛冶屋が町に開店した。", "決定で続ける。"];
+      if (story.phase === "alef") return storyTypedLines(story, ALEF_DIALOG_LINES, "決定で町へ戻る。");
     }
     if (state.lastConversation) {
       return [`${state.lastConversation.name}: ${state.lastConversation.line}`];
@@ -7198,27 +7195,50 @@
     const story = state && state.townStory && state.townStory.type === "blacksmithArrival" ? state.townStory : null;
     if (!story) return null;
     const now = Date.now();
+    if (!story.phase || story.phase === "message") story.phase = story.phase === "message" ? "godoTalk" : "intro";
+    if (!Number.isFinite(story.dialogIndex)) story.dialogIndex = 0;
+    if (!story.lineStartedAt) story.lineStartedAt = now;
     if (!story.startedAt) story.startedAt = now;
-    const elapsed = now - story.startedAt;
-    story.elapsed = elapsed;
-    if (elapsed >= 1600 && story.phase === "walk") story.phase = "message";
+    story.elapsed = now - story.startedAt;
+    if (story.phase === "walk" && story.elapsed >= GODO_WALK_DURATION) {
+      story.phase = "godoTalk";
+      story.dialogIndex = 0;
+      story.lineStartedAt = now;
+      story.startedAt = now - GODO_WALK_DURATION;
+      story.elapsed = GODO_WALK_DURATION;
+    }
     return story;
   }
 
   function advanceTownStory(state) {
     const story = state && state.townStory && state.townStory.type === "blacksmithArrival" ? state.townStory : null;
     if (!story) return false;
-    const elapsed = story.startedAt ? Date.now() - story.startedAt : 0;
-    story.elapsed = elapsed;
-    if (!story.opened && (elapsed < 1600 || story.phase === "walk")) {
-      story.phase = "message";
-      story.startedAt = Date.now() - 1700;
-      story.elapsed = 1700;
+    const now = Date.now();
+    if (!story.phase || story.phase === "message") story.phase = story.phase === "message" ? "godoTalk" : "intro";
+    if (!story.lineStartedAt) story.lineStartedAt = now;
+    if (!Number.isFinite(story.dialogIndex)) story.dialogIndex = 0;
+
+    if (story.phase === "intro") {
+      if (advanceStoryLine(story, STORY_INTRO_LINES, "walk")) {
+        story.startedAt = now;
+        story.elapsed = 0;
+      }
       return true;
     }
-    if (!story.opened) {
+
+    if (story.phase === "walk") {
+      story.elapsed = story.startedAt ? now - story.startedAt : 0;
+      if (story.elapsed >= GODO_WALK_DURATION) {
+        story.phase = "godoTalk";
+        story.dialogIndex = 0;
+        story.lineStartedAt = now;
+      }
+      return true;
+    }
+
+    if (story.phase === "godoTalk") {
+      if (!advanceStoryLine(story, GODO_DIALOG_LINES, "opened")) return true;
       story.opened = true;
-      story.phase = "opened";
       state.buildings.blacksmithLevel = 1;
       state.flags.blacksmithArrivalShown = true;
       if (Game.State && Game.State.addLog) Game.State.addLog(state, "ゴドの鍛冶屋が町に開店した。");
@@ -7226,7 +7246,19 @@
       if (Game.Save && Game.Save.save) Game.Save.save(state);
       return true;
     }
-    if (story.opened) {
+
+    if (story.phase === "opened") {
+      ensureAlefVisitor(state);
+      story.phase = "alef";
+      story.dialogIndex = 0;
+      story.lineStartedAt = now;
+      if (Game.State && Game.State.addLog) Game.State.addLog(state, "冒険者アレフが町に立ち寄るようになった。");
+      if (Game.Save && Game.Save.save) Game.Save.save(state);
+      return true;
+    }
+
+    if (story.phase === "alef") {
+      if (!advanceStoryLine(story, ALEF_DIALOG_LINES, "done")) return true;
       state.townStory = null;
       if (Game.Save && Game.Save.save) Game.Save.save(state);
       return true;
@@ -7235,7 +7267,7 @@
   }
 
   function godoVisual(elapsed) {
-    const progress = Math.max(0, Math.min(1, elapsed / 1600));
+    const progress = Math.max(0, Math.min(1, elapsed / GODO_WALK_DURATION));
     const eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
     return {
       x: 50 - 6 * eased,
@@ -7258,19 +7290,94 @@
   function drawTownStoryOverlay(ctx, state, story) {
     if (!story || story.type !== "blacksmithArrival") return;
     const R = Game.Renderer;
-    if (story.opened) {
+    if (story.phase === "opened") {
       R.rect(ctx, 0, 0, 960, 540, "rgba(0,0,0,0.72)");
       R.text(ctx, "鍛冶屋が開店した", 480, 238, { size: 30, align: "center", color: "#fff2b8", bold: true });
       R.text(ctx, "ゴドの店", 480, 278, { size: 18, align: "center", color: "#d9c9a4", bold: true });
-      R.text(ctx, "決定で町へ戻る", 480, 316, { size: 16, align: "center", color: "#fff7df", bold: true });
+      R.text(ctx, "決定で続ける", 480, 316, { size: 16, align: "center", color: "#fff7df", bold: true });
     }
+  }
+
+  function storyTypedLines(story, lines, prompt) {
+    const index = Math.max(0, Math.min(lines.length - 1, story.dialogIndex || 0));
+    const line = lines[index] || "";
+    const chars = Array.from(line);
+    const elapsed = Date.now() - (story.lineStartedAt || Date.now());
+    const count = Math.min(chars.length, Math.floor(elapsed / STORY_TEXT_SPEED));
+    const visible = chars.slice(0, count).join("") + (count < chars.length ? "▌" : "");
+    const result = [];
+    if (index > 0) result.push(lines[index - 1]);
+    result.push(visible);
+    if (count >= chars.length && prompt) result.push(prompt);
+    return result;
+  }
+
+  function storyLineComplete(story, lines) {
+    const index = Math.max(0, Math.min(lines.length - 1, story.dialogIndex || 0));
+    const line = lines[index] || "";
+    return Date.now() - (story.lineStartedAt || Date.now()) >= Array.from(line).length * STORY_TEXT_SPEED;
+  }
+
+  function revealStoryLine(story, lines) {
+    const index = Math.max(0, Math.min(lines.length - 1, story.dialogIndex || 0));
+    const line = lines[index] || "";
+    story.lineStartedAt = Date.now() - Array.from(line).length * STORY_TEXT_SPEED - 80;
+  }
+
+  function advanceStoryLine(story, lines, nextPhase) {
+    if (!storyLineComplete(story, lines)) {
+      revealStoryLine(story, lines);
+      return false;
+    }
+    if ((story.dialogIndex || 0) < lines.length - 1) {
+      story.dialogIndex = (story.dialogIndex || 0) + 1;
+      story.lineStartedAt = Date.now();
+      return false;
+    }
+    story.phase = nextPhase;
+    story.dialogIndex = 0;
+    story.lineStartedAt = Date.now();
+    return true;
+  }
+
+  function ensureAlefVisitor(state) {
+    if (!state) return;
+    if (!Array.isArray(state.villagers)) state.villagers = [];
+    if (state.villagers.some((villager) => villager.id === "alef")) {
+      state.flags.alefVisited = true;
+      if (Game.Villagers && Game.Villagers.syncPopulation) Game.Villagers.syncPopulation(state);
+      return;
+    }
+    state.villagers.push({
+      id: "alef",
+      name: "アレフ",
+      job: "冒険者",
+      css: "villager-traveler",
+      x: 45,
+      y: 50,
+      minTownLevel: 1,
+      status: "healthy",
+      daysWithoutFavorite: 0,
+      favoriteBoughtToday: false,
+      joinedDay: state.day || 1,
+      creditTrust: 65,
+      creditBlocked: false,
+      likes: ["herb", "torch", "old_dagger", "small_shield"],
+      lines: [
+        "迷宮の近くにこんな店があるなんて、これからの発展が楽しみだな。",
+        "俺はアレフ。仕入れの迷宮に挑むなら、薬とたいまつを忘れるなよ。"
+      ]
+    });
+    state.flags.alefVisited = true;
+    if (Game.Villagers && Game.Villagers.normalizeVillagers) Game.Villagers.normalizeVillagers(state);
   }
 
   function isRoad(x, y) {
     if (activeTownLevel <= 1) {
-      return ((x === 48 || x === 49) && y >= 45 && y <= 49) ||
+      return ((x === 48 || x === 49) && y >= 47 && y <= 50) ||
         (x === 56 && y >= 43 && y <= 49) ||
-        (y === 49 && x >= 47 && x <= 56);
+        (y === 49 && x >= 47 && x <= 56) ||
+        (y === 50 && x >= 43 && x <= 49);
     }
     return (x >= 18 && x <= 82 && y === 42) ||
       (y >= 18 && y <= 64 && x === 48) ||
@@ -7290,7 +7397,6 @@
 })();
 
 
-// src/scenes/dungeonScene.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
@@ -7842,7 +7948,6 @@
 })();
 
 
-// src/ui.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
   let handlers = {};
@@ -9895,7 +10000,6 @@
 })();
 
 
-// src/main.js
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
   let state = null;
