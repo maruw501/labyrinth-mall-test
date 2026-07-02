@@ -5992,13 +5992,13 @@
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
-  const TILE = 24;
-  const TILE_Y = 24;
+  const TILE = 28;
+  const TILE_Y = 28;
   const ROW_SKEW = 0;
-  const MAP_X = 36;
-  const MAP_Y = 24;
-  const VIEW_W = 37;
-  const VIEW_H = 15;
+  const MAP_X = 32;
+  const MAP_Y = 34;
+  const VIEW_W = 32;
+  const VIEW_H = 13;
   const UI_WINDOW_Y = 412;
   const UI_WINDOW_H = 108;
   let activeCamera = { x: 0, y: 0 };
@@ -7400,13 +7400,13 @@
 (function () {
   const Game = window.LabyrinthMall || (window.LabyrinthMall = {});
 
-  const TILE = 48;
-  const TILE_Y = 37;
+  const TILE = 52;
+  const TILE_Y = 40;
   const ROW_SKEW = 3;
-  const VIEW_W = 15;
-  const VIEW_H = 10;
-  const MAP_X = 86;
-  const MAP_Y = 78;
+  const VIEW_W = 14;
+  const VIEW_H = 9;
+  const MAP_X = 98;
+  const MAP_Y = 74;
   const MAP_W = VIEW_W * TILE + (VIEW_H - 1) * ROW_SKEW;
   const MAP_H = (VIEW_H - 1) * TILE_Y + TILE;
 
