@@ -4917,7 +4917,7 @@
   ]);
 
   const LARGE_BUILDING_LABELS = {
-    shop: { name: "\u304a\u5e97", symbol: "\u5e97", x: 48, y: 42, footprint: { x: 45, y: 38, w: 7, h: 7 }, description: "\u68da\u306b\u5546\u54c1\u3092\u4e26\u3079\u3001\u591c\u306e\u8ca9\u58f2\u3078\u5099\u3048\u308b\u5e97\u3002" },
+    shop: { name: "\u304a\u5e97", symbol: "\u5e97", x: 49, y: 42, footprint: { x: 44, y: 36, w: 10, h: 9 }, description: "\u68da\u306b\u5546\u54c1\u3092\u4e26\u3079\u3001\u591c\u306e\u8ca9\u58f2\u3078\u5099\u3048\u308b\u5e97\u3002" },
     item_shop: { name: "\u9053\u5177\u5c4b", symbol: "\u9053", description: "\u85ac\u8349\u3084\u305f\u3044\u307e\u3064\u306a\u3069\u3092\u6271\u3046\u5546\u5e97\u3002" },
     hospital: { name: "\u75c5\u9662", symbol: "\u533b", description: "\u8ca0\u50b7\u3057\u305f\u6751\u4eba\u306e\u72b6\u614b\u3092\u78ba\u8a8d\u3059\u308b\u5834\u6240\u3002" },
     blacksmith: { name: "\u935b\u51b6\u5c4b", symbol: "\u935b", description: "\u7d20\u6750\u3067\u88c5\u5099\u3092\u4f5c\u308a\u3001\u5f37\u5316\u3059\u308b\u3002" },
@@ -5061,10 +5061,10 @@
     if (isTownDevelopmentDeskTile(state, x, y)) {
       return {
         id: "town_development_desk",
-        name: "町の開発台",
-        symbol: "開",
+        name: "投資棚",
+        symbol: "投",
         action: "openTown",
-        description: "町と店へ投資するための帳場。"
+        description: "町と倉庫へ投資するための棚。"
       };
     }
     if (isTownShopNameSignTile(state, x, y)) {
@@ -5193,28 +5193,29 @@
     const right = x === footprint.x + footprint.w - 1;
     const top = y === footprint.y;
     const bottom = y === footprint.y + footprint.h - 1;
-    const door = bottom && x >= footprint.x + 3 && x <= footprint.x + 4;
-    return (left || right || top || bottom) && !door;
+    const door = bottom && x >= footprint.x + 4 && x <= footprint.x + 5;
+    const divider = y === footprint.y + 3 && ((x >= footprint.x && x <= footprint.x + 2) || (x >= footprint.x + 7 && x <= footprint.x + footprint.w - 1));
+    return ((left || right || top || bottom) && !door) || divider;
   }
 
   function isTownShopCounterTile(state, x, y) {
     if (!state || (state.town.level || 1) > 1) return false;
-    return y === 41 && x >= 47 && x <= 50;
+    return y === 42 && x >= 45 && x <= 50;
   }
 
   function isTownShopStorageTile(state, x, y) {
     if (!state || (state.town.level || 1) > 1) return false;
-    return x === 46 && y === 39;
+    return x === 46 && y === 37;
   }
 
   function isTownShopBedTile(state, x, y) {
     if (!state || (state.town.level || 1) > 1) return false;
-    return x === 46 && (y === 42 || y === 43);
+    return x === 45 && y === 37;
   }
 
   function isTownDevelopmentDeskTile(state, x, y) {
     if (!state || (state.town.level || 1) > 1) return false;
-    return x === 50 && y === 39;
+    return x === 51 && y === 37;
   }
 
   function isTownShopNameSignTile(state, x, y) {
@@ -5291,7 +5292,7 @@
       return "ベッドがある。決定で眠り、翌朝を迎えられる。";
     }
     if (isTownDevelopmentDeskTile(state, next.x, next.y)) {
-      return "町の開発台だ。決定で町へ投資できる。";
+      return "投資棚だ。決定で町へ投資できる。";
     }
     if (isTownShopNameSignTile(state, next.x, next.y)) {
       return "店名看板だ。決定でお店の名前を決められる。";
@@ -6020,7 +6021,7 @@
     { id: "dog", sprite: "animal-dog", x: 58.2, y: 45.4, path: [[0, 0], [-1.0, 0], [-1.0, 0.2], [0, 0.2]], speed: 980, size: 19, footDrop: 4, phase: 0.55 },
     { id: "chicken", sprite: "animal-chicken", x: 53.0, y: 36.7, path: [[0, 0], [0.9, 0], [0.9, 0.2], [0, 0.2]], speed: 620, size: 16, footDrop: 1, phase: 0.80 }
   ];
-  const LEVEL_ONE_SHOP = { x: 45, y: 38, w: 7, h: 7 };
+  const LEVEL_ONE_SHOP = { x: 44, y: 36, w: 10, h: 9 };
   const LEVEL_ONE_BLACKSMITH = { x: 38, y: 48, w: 6, h: 6 };
   const GODO_DIALOG_LINES = [
     "ゴド「こんなところにお店があったとは、",
@@ -6316,9 +6317,10 @@
     const right = x === footprint.x + footprint.w - 1;
     const top = y === footprint.y;
     const bottom = y === footprint.y + footprint.h - 1;
-    const door = bottom && x >= footprint.x + 3 && x <= footprint.x + 4;
+    const door = bottom && x >= footprint.x + 4 && x <= footprint.x + 5;
+    const divider = y === footprint.y + 3 && ((x >= footprint.x && x <= footprint.x + 2) || (x >= footprint.x + 7 && x <= footprint.x + footprint.w - 1));
     if (door) return "shopDoor";
-    if (left || right || top || bottom) return "shopWall";
+    if (left || right || top || bottom || divider) return "shopWall";
     return "shopFloor";
   }
 
@@ -6779,11 +6781,15 @@
 
   function drawLevelOneShopProps(ctx, state, building) {
     const R = Game.Renderer;
-    const warehouse = tilePoint(46, 39);
-    const developmentDesk = tilePoint(50, 39);
-    const counterStart = tilePoint(47, 41);
-    const bed = tilePoint(46, 42);
-    const box = tilePoint(50, 43);
+    const bed = tilePoint(45, 37);
+    const warehouse = tilePoint(46, 37);
+    const developmentDesk = tilePoint(51, 37);
+    const counterStart = tilePoint(45, 42);
+    const leftShelf = tilePoint(46, 40);
+    const rightShelf = tilePoint(49, 40);
+    const box = tilePoint(52, 41);
+
+    drawShopBed(ctx, bed.x, bed.y);
 
     R.drawShadow(ctx, warehouse.x + 4, warehouse.y + 8, 16, 11, 0.22);
     R.rect(ctx, warehouse.x + 4, warehouse.y + 5, 16, 13, "#7b4e27");
@@ -6794,9 +6800,12 @@
 
     drawTownDevelopmentDesk(ctx, developmentDesk.x, developmentDesk.y);
 
-    R.drawShadow(ctx, counterStart.x + 4, counterStart.y + 16, TILE * 4 - 8, 10, 0.28);
-    for (let i = 0; i < 4; i += 1) {
-      const counter = tilePoint(47 + i, 41);
+    drawDisplayShelf(ctx, leftShelf.x, leftShelf.y, "薬");
+    drawDisplayShelf(ctx, rightShelf.x, rightShelf.y, "品");
+
+    R.drawShadow(ctx, counterStart.x + 4, counterStart.y + 16, TILE * 6 - 8, 10, 0.28);
+    for (let i = 0; i < 6; i += 1) {
+      const counter = tilePoint(45 + i, 42);
       if (R.drawSpriteImage(ctx, "ninja-shop-counter", counter.x, counter.y + 5, TILE, 18, "crate", "")) {
         R.rect(ctx, counter.x + 1, counter.y + 18, TILE - 2, 3, "rgba(36,19,9,0.30)");
         continue;
@@ -6809,8 +6818,6 @@
       if (i > 0) R.rect(ctx, counter.x + 1, counter.y + 9, 1, 11, "rgba(55,28,12,0.42)");
     }
 
-    drawShopBed(ctx, bed.x, bed.y);
-
     R.drawShadow(ctx, box.x + 7, box.y + 9, 11, 9, 0.18);
     R.rect(ctx, box.x + 7, box.y + 7, 11, 10, "#d39b47");
     R.rect(ctx, box.x + 8, box.y + 8, 9, 2, "#f2c16a");
@@ -6821,15 +6828,26 @@
 
   function drawShopBed(ctx, x, y) {
     const R = Game.Renderer;
-    R.drawShadow(ctx, x + 4, y + 30, 17, 9, 0.22);
-    R.rect(ctx, x + 3, y + 5, 18, 35, "#7c4c2c");
-    R.rect(ctx, x + 5, y + 7, 14, 8, "#f4e7bd");
-    R.rect(ctx, x + 5, y + 15, 14, 21, "#39596f");
-    R.rect(ctx, x + 5, y + 15, 14, 4, "#5e83a0");
-    R.rect(ctx, x + 5, y + 34, 14, 3, "rgba(28,17,10,0.34)");
-    R.rect(ctx, x + 3, y + 5, 3, 35, "rgba(39,24,13,0.32)");
-    R.stroke(ctx, x + 3, y + 5, 18, 35, "rgba(34,19,8,0.76)", 1);
-    R.text(ctx, "眠", x + 12, y + 21, { size: 10, align: "center", color: "#fff2b8", bold: true, shadow: true });
+    R.drawShadow(ctx, x + 3, y + 15, 18, 7, 0.22);
+    R.rect(ctx, x + 3, y + 4, 18, 17, "#7c4c2c");
+    R.rect(ctx, x + 5, y + 6, 14, 5, "#f4e7bd");
+    R.rect(ctx, x + 5, y + 11, 14, 8, "#39596f");
+    R.rect(ctx, x + 5, y + 11, 14, 3, "#5e83a0");
+    R.rect(ctx, x + 3, y + 4, 3, 17, "rgba(39,24,13,0.32)");
+    R.stroke(ctx, x + 3, y + 4, 18, 17, "rgba(34,19,8,0.76)", 1);
+    R.text(ctx, "眠", x + 12, y + 10, { size: 9, align: "center", color: "#fff2b8", bold: true, shadow: true });
+  }
+
+  function drawDisplayShelf(ctx, x, y, label) {
+    const R = Game.Renderer;
+    R.drawShadow(ctx, x + 4, y + 14, 16, 7, 0.18);
+    R.rect(ctx, x + 4, y + 8, 16, 12, "#805631");
+    R.rect(ctx, x + 5, y + 9, 14, 3, "#d19a52");
+    R.rect(ctx, x + 5, y + 15, 14, 2, "rgba(41,24,10,0.32)");
+    R.rect(ctx, x + 8, y + 12, 4, 4, "#83c66d");
+    R.rect(ctx, x + 14, y + 12, 3, 4, "#d7bf64");
+    R.stroke(ctx, x + 4, y + 8, 16, 12, "rgba(34,19,8,0.70)", 1);
+    R.text(ctx, label, x + 12, y + 4, { size: 8, align: "center", color: "#fff2b8", bold: true, shadow: true });
   }
 
   function drawTownDevelopmentDesk(ctx, x, y) {
@@ -6841,7 +6859,7 @@
     R.stroke(ctx, x + 5, y + 8, 15, 12, "rgba(30,17,8,0.76)", 1);
     R.rect(ctx, x + 8, y + 1, 9, 9, "rgba(52,37,25,0.96)");
     R.stroke(ctx, x + 8, y + 1, 9, 9, "#e0c47a", 1);
-    R.text(ctx, "開", x + 12, y + 0, { size: 9, align: "center", color: "#fff2b8", bold: true, shadow: false });
+    R.text(ctx, "投", x + 12, y + 0, { size: 9, align: "center", color: "#fff2b8", bold: true, shadow: false });
     R.rect(ctx, x + 16, y + 13, 3, 3, "#8fd66a");
   }
 
