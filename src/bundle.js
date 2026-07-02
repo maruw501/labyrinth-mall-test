@@ -5094,7 +5094,7 @@
         description: "袋と倉庫の品を出し入れできる。"
       };
     }
-    if (isTownShopBedTile(state, x, y)) {
+    if (isTownShopBedTile(state, x, y) || isTownShopBedUseTile(state, x, y)) {
       return {
         id: "shop_bed",
         name: "ベッド",
@@ -5213,6 +5213,11 @@
     return x === 45 && y === 37;
   }
 
+  function isTownShopBedUseTile(state, x, y) {
+    if (!state || (state.town.level || 1) > 1) return false;
+    return x === 45 && y === 38;
+  }
+
   function isTownDevelopmentDeskTile(state, x, y) {
     if (!state || (state.town.level || 1) > 1) return false;
     return x === 51 && y === 37;
@@ -5289,7 +5294,7 @@
       return "倉庫箱がある。決定で袋と倉庫の品を出し入れできる。";
     }
     if (isTownShopBedTile(state, next.x, next.y)) {
-      return "ベッドがある。決定で眠り、翌朝を迎えられる。";
+      return "ベッドがある。いつでも眠れる。決定で翌朝を迎える。";
     }
     if (isTownDevelopmentDeskTile(state, next.x, next.y)) {
       return "投資棚だ。決定で町へ投資できる。";
